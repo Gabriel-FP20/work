@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:async';
-
+import 'shared_data.dart';
+import 'main.dart';
 
 class PomodoroTimer extends StatefulWidget {
 
@@ -32,7 +33,7 @@ class _PomodoroTimerState extends State<PomodoroTimer>
   int _currentTimeRemainingBreak = 0;
 
   int _elapsedSeconds = 0;
-  bool _isActivityTime = true;
+  bool _isActivityTime = SharedData.isActivityTime;
   // ignore: unused_field
   String _timerText = '';
   bool isCountingDown = false;
@@ -120,10 +121,12 @@ void initState() {
   // _animationController.reset();
   _animationController.reverse(from: 1.0).whenComplete(() async {
     // A animação terminou, chame a função startBreakTime()
+          setState(() {
+        SharedData.isActivityTime = false;
+      });
     await Future.delayed(Duration(seconds: 1));
 
     if (widget.auto) {
-
       startBreakTime();
     }
   });
@@ -142,11 +145,13 @@ void initState() {
         _currentTimeRemainingBreak = widget.breakTime;
         _isActivityTime = false;
         _elapsedSeconds = 0;
-        
       });
       _animationController.duration = Duration(seconds: widget.breakTime);
       // _animationController.reset();
       _animationController.reverse(from: 1.0).whenComplete(() async {
+                  setState(() {
+        SharedData.isActivityTime = true;
+      });
         await Future.delayed(Duration(seconds: 1));
     // A animação terminou, chame a função startBreakTime()
         if (widget.auto) {

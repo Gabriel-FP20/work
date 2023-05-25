@@ -128,12 +128,6 @@ with SingleTickerProviderStateMixin {
                       ),
                     ],
                   );
-                // } else {
-                //   return AlertDialog(
-                //     title: const Text('Carregando'),
-                //     content: CircularProgressIndicator(),
-                //   );
-                // }
               },
             );
           },
