@@ -38,6 +38,7 @@ class _PomodoroTimerState extends State<PomodoroTimer>
   bool isCountingDown = false;
   bool loop = true;
 
+
 // Tempo de trabalho padrão: 25 minutos (em segundos)
 // Tempo de intervalo padrão: 5 minutos (em segundos)
 
@@ -211,7 +212,7 @@ void initState() {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: (_totalTime == 0) ? null : () {
                           if (!isCountingDown)
                           {
                             startTimer();

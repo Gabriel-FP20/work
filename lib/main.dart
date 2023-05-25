@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'notifications.dart';
 import 'timer.dart';
-
+import 'package:confetti/confetti.dart';
 
 
 void main() {
@@ -33,13 +33,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _animation;
+  // late Animation<double> _animation;
   double sliderValue = 0.0;
   double waterValue = 0.0;
   double waterValueMax = 0.0;
   double timer = 0;
 
+  bool firstTime = true;
 
+  late ConfettiController _confettiController;
   bool waterButton = true;
   bool hintButton = true;
   bool notificationButton = true;
@@ -57,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage>
   String text_notification = "Nada";
   bool show = false;
   String category= "Nada";
+
 
 
   // void startNotifications() {
@@ -77,25 +80,27 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 5));
     // startNotifications();
-    _animationController = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    );
+    // _animationController = AnimationController(
+    //   duration: const Duration(seconds: 10),
+    //   vsync: this,
+    // );
 
-    _animation = Tween(begin: 1.0, end: 0.0).animate(_animationController);
+    // _animation = Tween(begin: 1.0, end: 0.0).animate(_animationController);
 
-    _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        // A animação foi concluída, você pode realizar alguma ação aqui
-        setState(() {
-        });
-      }
-    });
+    // _animationController.addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     // A animação foi concluída, você pode realizar alguma ação aqui
+    //     setState(() {
+    //     });
+    //   }
+    // });
   }
 
   @override
   void dispose() {
+    _confettiController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -113,6 +118,8 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
+
+
   @override
   StatefulWidget build(BuildContext context) {
     // ignore: prefer_typing_uninitialized_variables
@@ -128,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage>
               children: [
                 Image.asset(
                   'assets/images/topo1.png',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -385,22 +392,47 @@ class _MyHomePageState extends State<MyHomePage>
             ),
           ),
 
+        Stack(children: [
 
+
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [
+              Colors.red,
+              Colors.green,
+              Colors.blue,
+              Colors.yellow,
+            ],
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  ConfettiWidget(
+                        confettiController: _confettiController,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        shouldLoop: false,
+                        colors: const [
+                          Colors.red,
+                          Colors.green,
+                          Colors.blue,
+                          Colors.yellow,
+                        ],
+                    ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         trackHeight: 30.0,
                         activeTrackColor: Colors.blue, // Define a cor de preenchimento transparente
-                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 00.0),
-                        overlayShape: RoundSliderOverlayShape(overlayRadius: 10.0),
+                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 00.0),
+                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
                       ),
                       child: Transform.rotate(
                         angle: 180 * pi / 180,
@@ -423,13 +455,13 @@ class _MyHomePageState extends State<MyHomePage>
                       setState(() {
                         if (waterValueMax == 0)
                         {
-                          text_notification = 'Configure sua meta diária';
+                          text_notification = 'Configure sua meta diária de água';
                           notifications.add(text_notification);
                           category = "Água";
                         }
-                        if (waterValue == waterValueMax * 1000) {
-                          waterValue = 0;
-                        }
+                        // if (waterValue == waterValueMax * 1000) {
+                        //   waterValue = 0;
+                        // }
                       });
                       if (waterValueMax > 0) {
                     
@@ -455,46 +487,85 @@ class _MyHomePageState extends State<MyHomePage>
                                                   // Ação do botão
                                                   setState(() {
                                                     waterValue += 180;
+                                                    if (waterValue >= waterValueMax*1000)
+                                                    {
+                                                      waterValue = waterValueMax*1000;
+                                                    }
                                                   });
                                                   Navigator.of(context).pop();
+                                                  if ((waterValue >= waterValueMax) && firstTime )
+                                                  {
+                                                    _confettiController.play();
+                                                    firstTime = false;
+                                                    text_notification = 'Meta Atingida';
+                                                    notifications.add(text_notification);
+                                                    category = "Alegria";
+                                                  }                                                  
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                   shape: const CircleBorder(),
                                                   padding: const EdgeInsets.all(
                                                       16.0), // Ajuste o tamanho do botão conforme necessário
                                                 ),
-                                                child: const Icon(Icons.add),
+                                                child: const Text("180 ml"),
                                               ),
                                               ElevatedButton(
                                                 onPressed: () {
                                                   // Ação do botão
                                                   setState(() {
                                                     waterValue += 300;
+                                                    if (waterValue >= waterValueMax*1000)
+                                                    {
+                                                      waterValue = waterValueMax*1000;
+                                                    }                                                   
                                                   });
                                                   Navigator.of(context).pop();
+                                                  if ((waterValue >= waterValueMax) && firstTime )
+                                                  {
+                                                    _confettiController.play();
+                                                    firstTime = false;
+                                                    text_notification = 'Meta Atingida';
+                                                    notifications.add(text_notification);
+                                                    category = "Alegria";
+                                                  }                                                  
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                   shape: const CircleBorder(),
                                                   padding: const EdgeInsets.all(
                                                       16.0), // Ajuste o tamanho do botão conforme necessário
                                                 ),
-                                                child: const Icon(Icons.add),
+                                                child: const Text("300 ml"),
                                               ),
                                               ElevatedButton(
                                                 onPressed: () {
                                                   // Ação do botão
-                                                  waterValue += 500;
+                                                  setState(() {
+                                                    waterValue += 500;
+                                                    if (waterValue >= waterValueMax*1000)
+                                                    {
+                                                      waterValue = waterValueMax*1000;
+                                                    }                                                   
+                                                  });
                                                   Navigator.of(context).pop();
+                                                  if ((waterValue >= waterValueMax*1000) && firstTime )
+                                                  {
+                                                    _confettiController.play();
+                                                    firstTime = false;
+                                                    text_notification = 'Meta Atingida';
+                                                    notifications.add(text_notification);
+                                                    category = "Alegria";
+                                                  }
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                   shape: const CircleBorder(),
                                                   padding: const EdgeInsets.all(
                                                       16.0), // Ajuste o tamanho do botão conforme necessário
                                                 ),
-                                                child: const Icon(Icons.add),
+                                                child: const Text("500 ml"),
                                               ),
                                             ],
                                           ),
+                                          const SizedBox(height: 30),
                                           TextField(
                                             enabled: waterButton,
                                             keyboardType: TextInputType.number,
@@ -505,7 +576,11 @@ class _MyHomePageState extends State<MyHomePage>
                                             ),
                                             onChanged: (value) => {
                                               setState(() {
-                                                waterValue = double.parse(value);
+                                                waterValue += double.parse(value);
+                                                if ((waterValue >= waterValueMax*1000))
+                                                {
+                                                  waterValue = waterValueMax*1000;
+                                                }
                                               })
                                             },
                                           ),
@@ -516,10 +591,45 @@ class _MyHomePageState extends State<MyHomePage>
                                 ),
                                 actions: [
                                   TextButton(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
                                     onPressed: () {
                                       Navigator.of(context).pop();
+                                      setState(() {
+                                        waterValue = 0;
+                                        firstTime = true;
+                                      });                            
                                     },
-                                    child: const Text('Adicionar'),
+                                  child: const Text(
+                                    'Zerar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  ),
+
+                                   TextButton(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      if (waterValue >= waterValueMax && waterValueMax != 0)
+                                      {
+                                      _confettiController.play();
+                                      firstTime = false;
+                                      text_notification = 'Meta Atingida';
+                                      notifications.add(text_notification);
+                                      category = "Alegria";
+                                      }
+                                    },
+                                  child: const Text(
+                                    'Adicionar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                   ),
                                 ],
                               );
@@ -529,7 +639,7 @@ class _MyHomePageState extends State<MyHomePage>
                           });
                     }},
                     style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                         ),
                       ),
@@ -546,6 +656,17 @@ class _MyHomePageState extends State<MyHomePage>
                   ),
                 ],
               ), 
+                    ConfettiWidget(
+                        confettiController: _confettiController,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        shouldLoop: false,
+                        colors: const [
+                          Colors.red,
+                          Colors.green,
+                          Colors.blue,
+                          Colors.yellow,
+                        ],
+                    ),
                   SizedBox(
                     width: 250,
                     height: 320,
@@ -564,8 +685,8 @@ class _MyHomePageState extends State<MyHomePage>
 
                 ],
               ),
-  
       ]),
+              ],),
 
 
           

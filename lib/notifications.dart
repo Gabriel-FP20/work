@@ -58,7 +58,11 @@ with SingleTickerProviderStateMixin {
           "Alerta : Você está a muito tempo trabalhando, dê um descanso!",
           "Alerta : O dia vai acabar e você está longe de bater a sua meta diária",
           "Alerta : Você está a muito tempo sem beber água",
-          "Alerta : Você precisa colocar a sua meta diária de água nas configurações"
+          "Alerta : Você precisa colocar a sua meta diária de água nas configurações",
+          "Alerta : Você precisa configurar o tempo de atividade e intervalo"
+        ],
+        "alegria": [
+          "Parabéns! Você atingiu a meta diária da quantidade de água!",
         ]
     };
 
@@ -74,6 +78,8 @@ with SingleTickerProviderStateMixin {
       return Colors.green; // Retorna verde para a categoria "dica"
     } else if (category == 'Alerta') {
       return Colors.red; // Retorna vermelho para a categoria "alerta"
+    } else if (category == "Alegria") {
+      return Colors.yellow;
     }
     return Colors.grey; // Retorna cinza para qualquer outra categoria desconhecida
   }
@@ -98,8 +104,11 @@ with SingleTickerProviderStateMixin {
                     {
                       text_final = jsonData['alertas'][3];
                     }
-                    else
+                    else if (widget.category == "Alegria")
                     {
+                      text_final = jsonData['alegria'][0];
+                    }
+                    else{
                       List<String> alertas = List<String>.from(jsonData['alertas']);
                       int randomIndex = Random().nextInt(alertas.length);
                       text_final = alertas[randomIndex];
