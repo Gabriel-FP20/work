@@ -41,6 +41,8 @@ class _Main extends State<MyHomePage> with SingleTickerProviderStateMixin {
 
   bool firstTime = true;
   bool _isActivityTime = SharedData.isActivityTime;
+  bool inity = SharedData.inity;
+
   late ConfettiController _confettiController;
   bool waterButton = true;
   bool hintButton = true;
@@ -100,6 +102,7 @@ class _Main extends State<MyHomePage> with SingleTickerProviderStateMixin {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _isActivityTime = SharedData.isActivityTime;
+        inity = SharedData.inity;
       });
     });
   }
@@ -400,11 +403,11 @@ class _Main extends State<MyHomePage> with SingleTickerProviderStateMixin {
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(height: 100,),
+                                SizedBox(height: 150,),
                                 Text(
-                                  _isActivityTime
-                                      ? 'Hora da Atividade!'
-                                      : 'Hora do Intervalo!',
+                                  _isActivityTime && !inity
+                                      ? 'Hora da Atividade!' : !_isActivityTime && !inity
+                                      ? 'Hora do Intervalo!' : 'Vamos Começar!',
                                   style: TextStyle(
                                       fontFamily: 'Baloo',
                                       fontSize: 40,
@@ -503,7 +506,7 @@ class _Main extends State<MyHomePage> with SingleTickerProviderStateMixin {
                                                                           context)
                                                                       .pop();
                                                                   if ((waterValue >=
-                                                                          waterValueMax) &&
+                                                                          waterValueMax*1000) &&
                                                                       firstTime) {
                                                                     _confettiController
                                                                         .play();
@@ -547,7 +550,7 @@ class _Main extends State<MyHomePage> with SingleTickerProviderStateMixin {
                                                                           context)
                                                                       .pop();
                                                                   if ((waterValue >=
-                                                                          waterValueMax) &&
+                                                                          waterValueMax*1000) &&
                                                                       firstTime) {
                                                                     _confettiController
                                                                         .play();
@@ -686,7 +689,7 @@ class _Main extends State<MyHomePage> with SingleTickerProviderStateMixin {
                                                       Navigator.of(context)
                                                           .pop();
                                                       if (waterValue >=
-                                                              waterValueMax &&
+                                                              waterValueMax * 1000 &&
                                                           waterValueMax != 0) {
                                                         _confettiController
                                                             .play();

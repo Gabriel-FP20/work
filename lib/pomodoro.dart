@@ -34,6 +34,8 @@ class _PomodoroTimerState extends State<PomodoroTimer>
 
   int _elapsedSeconds = 0;
   bool _isActivityTime = SharedData.isActivityTime;
+  bool inity = SharedData.inity;
+
   // ignore: unused_field
   String _timerText = '';
   bool isCountingDown = false;
@@ -222,9 +224,15 @@ void initState() {
                           {
                             startTimer();
                             timer();
+                            setState(() {
+                                  SharedData.inity = false;
+                                });
                           }
                           else{
                             stopTimer();
+                                                        setState(() {
+                                  SharedData.inity = true;
+                                });
                           }
                           setState(() {
                             isCountingDown = !isCountingDown;

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.josivan_app">
    <application
-        android:label="josivan_app"
+        android:label="Work Routine"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
